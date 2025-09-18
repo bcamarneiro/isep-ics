@@ -1,0 +1,18 @@
+services:
+  isep-ics:
+    build: .
+    container_name: isep-ics
+    environment:
+      ISEP_BASE_URL: "https://portal.isep.ipp.pt"
+      ISEP_USERNAME: "YOUR_USERNAME"            # leave empty (no Basic Auth in your HAR)
+      ISEP_PASSWORD: "YOUR_PASSWORD"            # leave empty
+      ISEP_CODE_USER: "YOUR_STUDENT_CODE"
+      ISEP_CODE_USER_CODE: "YOUR_STUDENT_CODE"
+      ISEP_ENTIDADE: "aluno"
+      ISEP_FETCH_WEEKS_BEFORE: "0" # adjust if you want past weeks too
+      ISEP_FETCH_WEEKS_AFTER: "6"  # e.g., 6–12 to cover the term
+      ISEP_REFRESH_MINUTES: "15"   # cache TTL
+      TZ: "Europe/Lisbon"
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
