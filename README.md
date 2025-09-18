@@ -61,6 +61,43 @@ curl http://localhost:8080/healthz
 curl -I http://localhost:8080/calendar.ics
 ```
 
+## Cookie Expiration Management
+
+The service uses session cookies for authentication, which will eventually expire. Here's how to handle it:
+
+### Monitoring Cookie Status
+```bash
+# Check if session is still valid
+curl http://localhost:8080/healthz | jq '.session_valid'
+
+# Monitor cookies continuously (every 5 minutes)
+python monitor_cookies.py
+
+# Monitor with custom interval (every 10 minutes)
+python monitor_cookies.py 10
+```
+
+### Updating Expired Cookies
+When cookies expire, use the cookie update utility:
+
+```bash
+# Run the cookie update script
+python update_cookies.py
+
+# Follow the prompts to paste new cookies from your browser
+# Then restart the service
+docker compose restart
+```
+
+### Manual Cookie Update Process
+1. **Login to ISEP Portal**: Go to https://portal.isep.ipp.pt and login
+2. **Open Developer Tools**: Press F12 in your browser
+3. **Navigate to Cookies**: Application/Storage → Cookies → portal.isep.ipp.pt
+4. **Copy All Cookies**: Right-click → Copy all cookie values
+5. **Run Update Script**: `python update_cookies.py` and paste the cookies
+6. **Restart Service**: `docker compose restart`
+7. **Verify**: `python test_e2e.py`
+
 ## Notes
 - If the portal requires form-login or anti-CSRF tokens instead of Basic Auth, add a session bootstrap step (e.g., GET the timetable page, parse tokens, then send POSTs with correct headers). The current code tries Basic Auth if provided; otherwise, it calls endpoints directly.
 - Parser is heuristic; adjust `parser.py` to extract course/teacher/room more precisely from the HTML fragments in `title`/`body`.

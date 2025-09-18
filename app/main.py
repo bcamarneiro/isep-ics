@@ -75,6 +75,54 @@ def _setup_session_cookies(session: requests.Session) -> bool:
         log.error(f"Failed to set up session cookies: {e}")
         return False
 
+def _test_session_validity(session: requests.Session) -> bool:
+    """Test if the current session cookies are still valid by making a test API call."""
+    try:
+        # Try to get code week for today - this is a lightweight test
+        today = datetime.now(APP_TZ)
+        data_str = today.strftime("%a %b %d %Y")
+        
+        headers = {
+            "Content-Type": "application/json; charset=utf-8",
+            "X-Requested-With": "XMLHttpRequest",
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Origin": "https://portal.isep.ipp.pt",
+            "Referer": f"https://portal.isep.ipp.pt/intranet/ver_horario/ver_horario.aspx?user={CODE_USER}",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:142.0) Gecko/20100101 Firefox/142.0"
+        }
+        
+        response = session.post(
+            GET_CODE_WEEK_URL,
+            json={"data": data_str},
+            headers=headers,
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            log.info("Session cookies are still valid")
+            return True
+        else:
+            log.warning(f"Session cookies may be expired - API returned {response.status_code}")
+            return False
+            
+    except Exception as e:
+        log.warning(f"Session validity test failed: {e}")
+        return False
+
+def _refresh_session_cookies() -> bool:
+    """Attempt to refresh session cookies by logging in again."""
+    log.info("Attempting to refresh session cookies...")
+    
+    # For now, we'll just log that cookies need to be updated manually
+    # In a production system, you might implement automatic login here
+    log.error("Session cookies have expired. Manual intervention required:")
+    log.error("1. Login to https://portal.isep.ipp.pt manually")
+    log.error("2. Capture fresh cookies from browser developer tools")
+    log.error("3. Update the _setup_session_cookies() function with new cookie values")
+    log.error("4. Restart the service: docker compose restart")
+    
+    return False
+
 def get_code_week_for_date(session: requests.Session, dt: datetime) -> str | None:
     # ASP endpoint expects English short date like "Thu Sep 25 2025"
     data_str = dt.strftime("%a %b %d %Y")
@@ -153,6 +201,13 @@ def refresh_cache():
         # Set up session cookies from HAR file data
         if not _setup_session_cookies(s):
             log.warning("Failed to set up session cookies")
+            return
+        
+        # Test session validity before proceeding
+        if not _test_session_validity(s):
+            log.error("Session cookies are invalid or expired")
+            _refresh_session_cookies()
+            return
         
         today = datetime.now(APP_TZ)
         weeks = [today + relativedelta(weeks=+w) for w in range(-WEEKS_BEFORE, WEEKS_AFTER + 1)]
@@ -195,4 +250,26 @@ def calendar():
 
 @app.get("/healthz")
 def healthz():
-    return {"status": "ok", "cache_expires": _cache_expires.isoformat()}
+    # Test session validity
+    session_valid = False
+    try:
+        with requests.Session() as s:
+            if _setup_session_cookies(s):
+                session_valid = _test_session_validity(s)
+    except Exception as e:
+        log.warning(f"Health check session test failed: {e}")
+    
+    # Count events safely
+    events_count = 0
+    if _cache_ics:
+        try:
+            events_count = len(_cache_ics.decode('utf-8').split('BEGIN:VEVENT')) - 1
+        except Exception:
+            events_count = 0
+    
+    return {
+        "status": "ok", 
+        "cache_expires": _cache_expires.isoformat(),
+        "session_valid": session_valid,
+        "events_count": events_count
+    }
