@@ -8,8 +8,8 @@ export interface Event {
 
 export interface Config {
   baseUrl: string;
-  codeUser: string;
-  codeUserCode: string;
+  codeUser?: string;
+  codeUserCode?: string;
   entidade: string;
   username?: string;
   password?: string;

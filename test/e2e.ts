@@ -20,14 +20,14 @@ const TIMEOUT = 30000;
 const MAX_RETRIES = 10;
 const RETRY_DELAY = 3000;
 
-class TestColors {
-  static GREEN = '\x1b[92m';
-  static RED = '\x1b[91m';
-  static YELLOW = '\x1b[93m';
-  static BLUE = '\x1b[94m';
-  static BOLD = '\x1b[1m';
-  static END = '\x1b[0m';
-}
+const TestColors = {
+  GREEN: '\x1b[92m',
+  RED: '\x1b[91m',
+  YELLOW: '\x1b[93m',
+  BLUE: '\x1b[94m',
+  BOLD: '\x1b[1m',
+  END: '\x1b[0m',
+} as const;
 
 function logInfo(message: string) {
   console.log(`${TestColors.BLUE}[INFO]${TestColors.END} ${message}`);
@@ -174,7 +174,13 @@ async function analyzeCalendarEvents() {
   }
 }
 
-function _printEventSummary(events: any[], title: string, maxEvents: number = 5) {
+interface CalendarEvent {
+  start?: Date;
+  summary?: string;
+  location?: string;
+}
+
+function _printEventSummary(events: CalendarEvent[], title: string, maxEvents: number = 5) {
   if (!events || events.length === 0) {
     logWarning(`${title}: No events found`);
     return;
