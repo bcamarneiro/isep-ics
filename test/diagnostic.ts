@@ -97,8 +97,8 @@ async function testServiceConfiguration(): Promise<boolean> {
   console.log('   ISEP_BASE_URL: https://portal.isep.ipp.pt');
   console.log('   ISEP_USERNAME: (empty - no Basic Auth)');
   console.log('   ISEP_PASSWORD: (empty - no Basic Auth)');
-  console.log('   ISEP_CODE_USER: YOUR_STUDENT_CODE');
-  console.log('   ISEP_CODE_USER_CODE: YOUR_STUDENT_CODE');
+  console.log('   ISEP_CODE_USER: 256287');
+  console.log('   ISEP_CODE_USER_CODE: 256287');
   console.log('   ISEP_ENTIDADE: aluno');
 
   return true;

@@ -28,7 +28,7 @@ const configSchema = z.object({
   ISEP_FETCH_WEEKS_AFTER: z.coerce.number().default(6),
   ISEP_REFRESH_MINUTES: z.coerce.number().default(15),
   TZ: z.string().default('Europe/Lisbon'),
-  PORT: z.coerce.number().default(8080),
+  PORT: z.coerce.number().default(4321),
 });
 
 const env = configSchema.parse(process.env);

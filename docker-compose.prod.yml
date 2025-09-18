@@ -10,7 +10,7 @@ services:
       ISEP_FETCH_WEEKS_AFTER: "6"
       ISEP_REFRESH_MINUTES: "15"
       TZ: "Europe/Lisbon"
-      PORT: "8080"
+      PORT: "4321"
       # Sensitive data from Docker secrets
       ISEP_USERNAME_FILE: "/run/secrets/isep_username"
       ISEP_PASSWORD_FILE: "/run/secrets/isep_password"
@@ -22,10 +22,10 @@ services:
       - isep_code_user
       - isep_code_user_code
     ports:
-      - "8080:8080"
+      - "4321:4321"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "bun", "--bun", "run", "-e", "fetch('http://localhost:8080/healthz').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"]
+      test: ["CMD", "bun", "--bun", "run", "-e", "fetch('http://localhost:4321/healthz').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"]
       interval: 30s
       timeout: 10s
       retries: 3
