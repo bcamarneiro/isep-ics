@@ -12,6 +12,11 @@ dist/
 # Environment
 .env
 .env.local
+env.local
+
+# Secrets
+secrets/*.txt
+!secrets/README.md
 
 # Logs
 *.log

@@ -1,5 +1,17 @@
 import { z } from 'zod';
+import { readFileSync } from 'fs';
 import { Config } from './types.js';
+
+/**
+ * Read secret from file if available, otherwise return undefined
+ */
+function readSecretFromFile(filePath: string): string | undefined {
+  try {
+    return readFileSync(filePath, 'utf8').trim();
+  } catch {
+    return undefined;
+  }
+}
 
 const configSchema = z.object({
   ISEP_BASE_URL: z.string().default('https://portal.isep.ipp.pt'),
@@ -8,6 +20,8 @@ const configSchema = z.object({
   ISEP_ENTIDADE: z.string().default('aluno'),
   ISEP_USERNAME: z.string().optional(),
   ISEP_PASSWORD: z.string().optional(),
+  ISEP_USERNAME_FILE: z.string().optional(),
+  ISEP_PASSWORD_FILE: z.string().optional(),
   ISEP_FETCH_WEEKS_BEFORE: z.coerce.number().default(0),
   ISEP_FETCH_WEEKS_AFTER: z.coerce.number().default(6),
   ISEP_REFRESH_MINUTES: z.coerce.number().default(15),
@@ -17,13 +31,18 @@ const configSchema = z.object({
 
 const env = configSchema.parse(process.env);
 
+// Read secrets from files if available (for production with Docker secrets)
+const usernameFromFile = env.ISEP_USERNAME_FILE ? readSecretFromFile(env.ISEP_USERNAME_FILE) : undefined;
+const passwordFromFile = env.ISEP_PASSWORD_FILE ? readSecretFromFile(env.ISEP_PASSWORD_FILE) : undefined;
+
 export const config: Config = {
   baseUrl: env.ISEP_BASE_URL.replace(/\/$/, ''),
   codeUser: env.ISEP_CODE_USER,
   codeUserCode: env.ISEP_CODE_USER_CODE,
   entidade: env.ISEP_ENTIDADE,
-  username: env.ISEP_USERNAME,
-  password: env.ISEP_PASSWORD,
+  // Use file secrets if available, otherwise fall back to environment variables
+  username: usernameFromFile || env.ISEP_USERNAME,
+  password: passwordFromFile || env.ISEP_PASSWORD,
   weeksBefore: env.ISEP_FETCH_WEEKS_BEFORE,
   weeksAfter: env.ISEP_FETCH_WEEKS_AFTER,
   refreshMinutes: env.ISEP_REFRESH_MINUTES,

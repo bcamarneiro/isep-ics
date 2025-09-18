@@ -2,10 +2,8 @@ services:
   isep-ics:
     build: .
     container_name: isep-ics
-    env_file:
-      - .env
     environment:
-      # Non-sensitive configuration (can be overridden)
+      # Non-sensitive configuration
       ISEP_BASE_URL: "https://portal.isep.ipp.pt"
       ISEP_CODE_USER: "YOUR_STUDENT_CODE"
       ISEP_CODE_USER_CODE: "YOUR_STUDENT_CODE"
@@ -15,6 +13,12 @@ services:
       ISEP_REFRESH_MINUTES: "15"
       TZ: "Europe/Lisbon"
       PORT: "8080"
+      # Sensitive data from Docker secrets
+      ISEP_USERNAME_FILE: "/run/secrets/isep_username"
+      ISEP_PASSWORD_FILE: "/run/secrets/isep_password"
+    secrets:
+      - isep_username
+      - isep_password
     ports:
       - "8080:8080"
     restart: unless-stopped
@@ -24,3 +28,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+secrets:
+  isep_username:
+    file: ./secrets/isep_username.txt
+  isep_password:
+    file: ./secrets/isep_password.txt

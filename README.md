@@ -42,28 +42,59 @@ Compared to the Python version:
 
 ## ⚙️ Configuration
 
-Edit `docker-compose.yml` environment values:
+### 🔐 Secret Management
 
-```yaml
-environment:
-  ISEP_BASE_URL: "https://portal.isep.ipp.pt"
-  ISEP_USERNAME: "your_username"        # Optional: Basic Auth
-  ISEP_PASSWORD: "your_password"        # Optional: Basic Auth
-  ISEP_CODE_USER: "YOUR_STUDENT_CODE"              # Your student code
-  ISEP_CODE_USER_CODE: "YOUR_STUDENT_CODE"         # Usually same as above
-  ISEP_ENTIDADE: "aluno"                # Student type
-  ISEP_FETCH_WEEKS_BEFORE: "0"          # Past weeks to fetch
-  ISEP_FETCH_WEEKS_AFTER: "6"           # Future weeks to fetch
-  ISEP_REFRESH_MINUTES: "15"            # Cache TTL in minutes
-  TZ: "Europe/Lisbon"                   # Timezone
-  PORT: "8080"                          # Service port
-```
+The application supports multiple ways to handle sensitive credentials:
+
+#### Development Setup
+1. **Run the setup script**:
+   ```bash
+   ./setup-secrets.sh
+   ```
+
+2. **Edit the `.env` file** with your credentials:
+   ```bash
+   ISEP_USERNAME=your_username
+   ISEP_PASSWORD=your_password
+   ```
+
+#### Production Setup
+1. **Create secret files**:
+   ```bash
+   echo "your_username" > secrets/isep_username.txt
+   echo "your_password" > secrets/isep_password.txt
+   chmod 600 secrets/*.txt
+   ```
+
+2. **Deploy with production compose**:
+   ```bash
+   docker compose -f docker-compose.prod.yml up -d
+   ```
+
+### 📋 Configuration Options
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `ISEP_USERNAME` | ISEP portal username | - | Yes |
+| `ISEP_PASSWORD` | ISEP portal password | - | Yes |
+| `ISEP_CODE_USER` | Your student code | `YOUR_STUDENT_CODE` | Yes |
+| `ISEP_CODE_USER_CODE` | Usually same as above | `YOUR_STUDENT_CODE` | Yes |
+| `ISEP_ENTIDADE` | Student type | `aluno` | Yes |
+| `ISEP_FETCH_WEEKS_BEFORE` | Past weeks to fetch | `0` | No |
+| `ISEP_FETCH_WEEKS_AFTER` | Future weeks to fetch | `6` | No |
+| `ISEP_REFRESH_MINUTES` | Cache TTL in minutes | `15` | No |
+| `TZ` | Timezone | `Europe/Lisbon` | No |
+| `PORT` | Service port | `8080` | No |
 
 ## 🚀 Quick Start
 
 ### Using Docker (Recommended)
 
+#### Development
 ```bash
+# Setup secrets (first time only)
+./setup-secrets.sh
+
 # Build and start the service
 docker compose up -d --build
 
@@ -72,6 +103,17 @@ curl http://localhost:8080/healthz
 
 # Get your calendar
 curl http://localhost:8080/calendar.ics
+```
+
+#### Production
+```bash
+# Setup production secrets
+echo "your_username" > secrets/isep_username.txt
+echo "your_password" > secrets/isep_password.txt
+chmod 600 secrets/*.txt
+
+# Deploy with production configuration
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 ### Local Development
