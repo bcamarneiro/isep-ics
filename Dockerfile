@@ -5,8 +5,8 @@ WORKDIR /srv/app
 # Copy package files
 COPY package.json bun.lockb* ./
 
-# Install dependencies
-RUN bun install --frozen-lockfile --production
+# Install dependencies (skip prepare script for production)
+RUN bun install --frozen-lockfile --production --ignore-scripts
 
 # Copy source code and tests
 COPY src ./src

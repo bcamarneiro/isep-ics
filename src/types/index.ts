@@ -36,3 +36,21 @@ export interface HealthStatus {
   eventsCount: number;
   lastRefresh?: string;
 }
+
+export interface ApiInfo {
+  name: string;
+  version: string;
+  description: string;
+  endpoints: {
+    calendar: string;
+    health: string;
+    docs: string;
+    openapi: string;
+  };
+}
+
+export interface ErrorResponse {
+  error: string;
+  message?: string;
+  timestamp: string;
+}

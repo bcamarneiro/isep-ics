@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { z } from 'zod';
-import type { Config } from './types.js';
+import type { Config } from '../types/index.js';
 
 /**
  * Read secret from file if available, otherwise return undefined
