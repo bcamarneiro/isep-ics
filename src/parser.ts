@@ -1,9 +1,11 @@
 import * as cheerio from 'cheerio';
-import { Event } from './types.js';
+import type { Event } from './types.js';
 
 // Regex patterns for parsing JavaScript date objects and event blocks
-const DATE_REGEX = /new Date\(\s*(\d{4})\s*,\s*(\d{1,2})\s*,\s*(\d{1,2})\s*,\s*(\d{1,2})\s*,\s*(\d{1,2})\s*\)/g;
-const EVENT_BLOCK_REGEX = /\{[^{}]*?['"]start['"]\s*:\s*new Date\([^\)]*\)[\s\S]*?['"]end['"]\s*:\s*new Date\([^\)]*\)[\s\S]*?\}/g;
+const DATE_REGEX =
+  /new Date\(\s*(\d{4})\s*,\s*(\d{1,2})\s*,\s*(\d{1,2})\s*,\s*(\d{1,2})\s*,\s*(\d{1,2})\s*\)/g;
+const EVENT_BLOCK_REGEX =
+  /\{[^{}]*?['"]start['"]\s*:\s*new Date\([^)]*\)[\s\S]*?['"]end['"]\s*:\s*new Date\([^)]*\)[\s\S]*?\}/g;
 
 /**
  * Parse JavaScript Date constructor to native Date object
@@ -42,13 +44,13 @@ function unescapeJs(str: string): string {
  * Extract room/location from text using heuristics
  */
 function extractLocation(text: string): string {
-  const locationMatch = text.match(/(Sala\s+[A-Za-z0-9\-]+|[A-Z]-\d{2,3})/);
+  const locationMatch = text.match(/(Sala\s+[A-Za-z0-9-]+|[A-Z]-\d{2,3})/);
   return locationMatch ? locationMatch[0] : '';
 }
 
 /**
  * Parse JavaScript blob containing event data and extract calendar events
- * 
+ *
  * Expected format:
  * <script> ... events: [{
  *   start: new Date(2025, 8, 18, 18, 10),
@@ -94,7 +96,6 @@ export function extractEvents(jsBlob: string): Event[] {
       });
     } catch (error) {
       console.warn('Failed to parse event block:', error);
-      continue;
     }
   }
 

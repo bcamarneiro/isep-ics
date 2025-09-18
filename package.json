@@ -7,7 +7,19 @@
     "start": "bun run src/app.ts",
     "dev": "bun --watch src/app.ts",
     "test:e2e": "bun run test/e2e.ts",
-    "test:diagnostic": "bun run test/diagnostic.ts"
+    "test:diagnostic": "bun run test/diagnostic.ts",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,js,json}": [
+      "biome check --write --unsafe"
+    ]
   },
   "keywords": ["isep", "ics", "calendar", "timetable", "bridge", "bun"],
   "author": "Bruno Camarneiro",
@@ -22,7 +34,10 @@
     "@hono/swagger-ui": "0.2.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.2.4",
     "@types/bun": "latest",
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6"
   }
 }

@@ -6,6 +6,8 @@ This directory contains sensitive configuration files for production deployment.
 
 - `isep_username.txt` - Your ISEP portal username
 - `isep_password.txt` - Your ISEP portal password
+- `isep_code_user.txt` - Your ISEP student code
+- `isep_code_user_code.txt` - Your ISEP student code (usually same as above)
 
 ## Setup Instructions
 
@@ -13,6 +15,8 @@ This directory contains sensitive configuration files for production deployment.
    ```bash
    echo "your_username" > secrets/isep_username.txt
    echo "your_password" > secrets/isep_password.txt
+   echo "your_student_code" > secrets/isep_code_user.txt
+   echo "your_student_code" > secrets/isep_code_user_code.txt
    ```
 
 2. Set proper permissions:

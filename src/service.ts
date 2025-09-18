@@ -1,8 +1,8 @@
 import { addWeeks, format } from 'date-fns';
-import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
-import { config, API_URLS } from './config.js';
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { API_URLS, config } from './config.js';
 import { extractEvents } from './parser.js';
-import { Event, SessionCookies, WeekEvent } from './types.js';
+import type { Event, SessionCookies, WeekEvent } from './types.js';
 
 // Global cache
 let cacheIcs: string | null = null;
@@ -16,20 +16,20 @@ export function setupSessionCookies(): SessionCookies {
   // These are the working session cookies from your HAR file
   // You'll need to update these with fresh cookies from your browser
   return {
-    '_ga_DM23NHK9JJ': 'GS2.1.s1757329188$o6$g1$t1757330340$j60$l0$h1679497609',
-    '_ga': 'GA1.1.1519809505.1756756750',
-    'ApplicationGatewayAffinityCORS': '55cd1562ba78615c3384c2c7dd016cc3',
-    'ApplicationGatewayAffinity': '55cd1562ba78615c3384c2c7dd016cc3',
-    'ASPSESSIONIDQWSQCCSB': 'EIGBHGOBFHPGMNOICAPFMEPA',
-    'EUIPPSESSIONGUID': 'cdbb5af5-f477-49e4-be8d-9f70f6099502',
-    'ASPSESSIONIDQUSRCCTB': 'FGBFNPOBLFLCNKIOJNCNGGPI',
-    'ASPSESSIONIDQQWRCCTB': 'GHBFNPOBJFNBFGLFOOEFFKPP',
-    'ASPSESSIONIDQWQRBDTA': 'IEPFMGPDPLNLPOELMADJNLBB',
-    'ASPSESSIONIDQSURBDTA': 'BHPFMGPDFGJNLJICEBLLAFMC',
-    'ASPSESSIONIDSWQQBAQC': 'CDKDDJPDBDDEJOMNLLLFEKFK',
-    'ASPSESSIONIDSUQRCDQB': 'AOPBGJPDLEOOOFNBKIPHLOCF',
-    'ASPSESSIONIDSWQSAAQB': 'EDEJMAAAGAIMEODENDDLNCAJ',
-    'ASPSESSIONIDQQXTDCRA': 'CFHHKHFBNNFGCEOOAFBAPBGL'
+    _ga_DM23NHK9JJ: 'GS2.1.s1757329188$o6$g1$t1757330340$j60$l0$h1679497609',
+    _ga: 'GA1.1.1519809505.1756756750',
+    ApplicationGatewayAffinityCORS: '55cd1562ba78615c3384c2c7dd016cc3',
+    ApplicationGatewayAffinity: '55cd1562ba78615c3384c2c7dd016cc3',
+    ASPSESSIONIDQWSQCCSB: 'EIGBHGOBFHPGMNOICAPFMEPA',
+    EUIPPSESSIONGUID: 'cdbb5af5-f477-49e4-be8d-9f70f6099502',
+    ASPSESSIONIDQUSRCCTB: 'FGBFNPOBLFLCNKIOJNCNGGPI',
+    ASPSESSIONIDQQWRCCTB: 'GHBFNPOBJFNBFGLFOOEFFKPP',
+    ASPSESSIONIDQWQRBDTA: 'IEPFMGPDPLNLPOELMADJNLBB',
+    ASPSESSIONIDQSURBDTA: 'BHPFMGPDFGJNLJICEBLLAFMC',
+    ASPSESSIONIDSWQQBAQC: 'CDKDDJPDBDDEJOMNLLLFEKFK',
+    ASPSESSIONIDSUQRCDQB: 'AOPBGJPDLEOOOFNBKIPHLOCF',
+    ASPSESSIONIDSWQSAAQB: 'EDEJMAAAGAIMEODENDDLNCAJ',
+    ASPSESSIONIDQQXTDCRA: 'CFHHKHFBNNFGCEOOAFBAPBGL',
   };
 }
 
@@ -46,15 +46,16 @@ export async function testSessionValidity(): Promise<boolean> {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'X-Requested-With': 'XMLHttpRequest',
-        'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'Origin': config.baseUrl,
-        'Referer': `${config.baseUrl}/intranet/ver_horario/ver_horario.aspx?user=${config.codeUser}`,
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:142.0) Gecko/20100101 Firefox/142.0',
-        'Cookie': Object.entries(setupSessionCookies())
+        Accept: 'application/json, text/javascript, */*; q=0.01',
+        Origin: config.baseUrl,
+        Referer: `${config.baseUrl}/intranet/ver_horario/ver_horario.aspx?user=${config.codeUser}`,
+        'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:142.0) Gecko/20100101 Firefox/142.0',
+        Cookie: Object.entries(setupSessionCookies())
           .map(([name, value]) => `${name}=${value}`)
-          .join('; ')
+          .join('; '),
       },
-      body: JSON.stringify({ data: dataStr })
+      body: JSON.stringify({ data: dataStr }),
     });
 
     if (response.ok) {
@@ -75,21 +76,22 @@ export async function testSessionValidity(): Promise<boolean> {
  */
 async function getCodeWeekForDate(date: Date): Promise<string | null> {
   const dataStr = format(date, 'EEE MMM dd yyyy');
-  
+
   const response = await fetch(API_URLS.getCodeWeek, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'X-Requested-With': 'XMLHttpRequest',
-      'Accept': 'application/json, text/javascript, */*; q=0.01',
-      'Origin': config.baseUrl,
-      'Referer': `${config.baseUrl}/intranet/ver_horario/ver_horario.aspx?user=${config.codeUser}`,
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:142.0) Gecko/20100101 Firefox/142.0',
-      'Cookie': Object.entries(setupSessionCookies())
+      Accept: 'application/json, text/javascript, */*; q=0.01',
+      Origin: config.baseUrl,
+      Referer: `${config.baseUrl}/intranet/ver_horario/ver_horario.aspx?user=${config.codeUser}`,
+      'User-Agent':
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:142.0) Gecko/20100101 Firefox/142.0',
+      Cookie: Object.entries(setupSessionCookies())
         .map(([name, value]) => `${name}=${value}`)
-        .join('; ')
+        .join('; '),
     },
-    body: JSON.stringify({ data: dataStr })
+    body: JSON.stringify({ data: dataStr }),
   });
 
   if (!response.ok) {
@@ -116,15 +118,16 @@ async function getWeekEvents(codeWeek: string): Promise<Event[]> {
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'X-Requested-With': 'XMLHttpRequest',
-      'Accept': 'application/json, text/javascript, */*; q=0.01',
-      'Origin': config.baseUrl,
-      'Referer': `${config.baseUrl}/intranet/ver_horario/ver_horario.aspx?user=${config.codeUser}`,
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:142.0) Gecko/20100101 Firefox/142.0',
-      'Cookie': Object.entries(setupSessionCookies())
+      Accept: 'application/json, text/javascript, */*; q=0.01',
+      Origin: config.baseUrl,
+      Referer: `${config.baseUrl}/intranet/ver_horario/ver_horario.aspx?user=${config.codeUser}`,
+      'User-Agent':
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:142.0) Gecko/20100101 Firefox/142.0',
+      Cookie: Object.entries(setupSessionCookies())
         .map(([name, value]) => `${name}=${value}`)
-        .join('; ')
+        .join('; '),
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
@@ -168,7 +171,7 @@ function buildIcs(events: Event[]): string {
     `X-WR-TIMEZONE:${timezone}`,
     `X-WR-CALNAME:ISEP Schedule`,
     `X-WR-CALDESC:ISEP Class Schedule`,
-    ''
+    '',
   ].join('\r\n');
 
   for (const event of events) {
@@ -180,15 +183,17 @@ function buildIcs(events: Event[]): string {
     ics += [
       'BEGIN:VEVENT',
       `UID:${uid}`,
-      `DTSTART:${format(startUtc, 'yyyyMMdd\'T\'HHmmss\'Z\'')}`,
-      `DTEND:${format(endUtc, 'yyyyMMdd\'T\'HHmmss\'Z\'')}`,
+      `DTSTART:${format(startUtc, "yyyyMMdd'T'HHmmss'Z'")}`,
+      `DTEND:${format(endUtc, "yyyyMMdd'T'HHmmss'Z'")}`,
       `SUMMARY:${event.summary.replace(/[,\\;]/g, '\\$&')}`,
       event.location ? `LOCATION:${event.location.replace(/[,\\;]/g, '\\$&')}` : '',
       event.description ? `DESCRIPTION:${event.description.replace(/[,\\;]/g, '\\$&')}` : '',
-      `DTSTAMP:${format(now, 'yyyyMMdd\'T\'HHmmss\'Z\'')}`,
+      `DTSTAMP:${format(now, "yyyyMMdd'T'HHmmss'Z'")}`,
       'END:VEVENT',
-      ''
-    ].filter(line => line).join('\r\n');
+      '',
+    ]
+      .filter((line) => line)
+      .join('\r\n');
   }
 
   ics += 'END:VCALENDAR\r\n';
@@ -200,7 +205,7 @@ function buildIcs(events: Event[]): string {
  */
 export async function refreshCache(): Promise<void> {
   console.log('Refreshing cache...');
-  
+
   // Test session validity first
   if (!(await testSessionValidity())) {
     console.error('Session cookies are invalid or expired');
@@ -213,15 +218,14 @@ export async function refreshCache(): Promise<void> {
   }
 
   const today = utcToZonedTime(new Date(), config.timezone);
-  const weeks = Array.from(
-    { length: config.weeksBefore + config.weeksAfter + 1 },
-    (_, i) => addWeeks(today, i - config.weeksBefore)
+  const weeks = Array.from({ length: config.weeksBefore + config.weeksAfter + 1 }, (_, i) =>
+    addWeeks(today, i - config.weeksBefore)
   );
 
   console.log(`Fetching events for ${weeks.length} weeks in parallel...`);
 
   // Parallel processing - this is the key performance improvement!
-  const weekPromises = weeks.map(date => fetchWeekEvents(date));
+  const weekPromises = weeks.map((date) => fetchWeekEvents(date));
   const results = await Promise.allSettled(weekPromises);
 
   const allEvents: Event[] = [];
@@ -247,7 +251,9 @@ export async function refreshCache(): Promise<void> {
   cacheExpires = new Date(Date.now() + config.refreshMinutes * 60 * 1000);
   lastRefresh = new Date();
 
-  console.log(`Refreshed cache with ${allEvents.length} events; valid until ${cacheExpires.toISOString()}`);
+  console.log(
+    `Refreshed cache with ${allEvents.length} events; valid until ${cacheExpires.toISOString()}`
+  );
 }
 
 /**
@@ -255,7 +261,7 @@ export async function refreshCache(): Promise<void> {
  */
 export async function getCachedIcs(): Promise<string> {
   const now = new Date();
-  
+
   if (!cacheIcs || now >= cacheExpires) {
     await refreshCache();
   }
@@ -275,6 +281,6 @@ export async function getHealthStatus() {
     cacheExpires: cacheExpires.toISOString(),
     sessionValid,
     eventsCount,
-    lastRefresh: lastRefresh?.toISOString()
+    lastRefresh: lastRefresh?.toISOString(),
   };
 }

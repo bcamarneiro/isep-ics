@@ -7,8 +7,6 @@ services:
     environment:
       # Non-sensitive configuration (can be overridden)
       ISEP_BASE_URL: "https://portal.isep.ipp.pt"
-      ISEP_CODE_USER: "YOUR_STUDENT_CODE"
-      ISEP_CODE_USER_CODE: "YOUR_STUDENT_CODE"
       ISEP_ENTIDADE: "aluno"
       ISEP_FETCH_WEEKS_BEFORE: "0"
       ISEP_FETCH_WEEKS_AFTER: "6"

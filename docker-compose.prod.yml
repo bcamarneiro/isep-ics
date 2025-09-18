@@ -5,8 +5,6 @@ services:
     environment:
       # Non-sensitive configuration
       ISEP_BASE_URL: "https://portal.isep.ipp.pt"
-      ISEP_CODE_USER: "YOUR_STUDENT_CODE"
-      ISEP_CODE_USER_CODE: "YOUR_STUDENT_CODE"
       ISEP_ENTIDADE: "aluno"
       ISEP_FETCH_WEEKS_BEFORE: "0"
       ISEP_FETCH_WEEKS_AFTER: "6"
@@ -16,9 +14,13 @@ services:
       # Sensitive data from Docker secrets
       ISEP_USERNAME_FILE: "/run/secrets/isep_username"
       ISEP_PASSWORD_FILE: "/run/secrets/isep_password"
+      ISEP_CODE_USER_FILE: "/run/secrets/isep_code_user"
+      ISEP_CODE_USER_CODE_FILE: "/run/secrets/isep_code_user_code"
     secrets:
       - isep_username
       - isep_password
+      - isep_code_user
+      - isep_code_user_code
     ports:
       - "8080:8080"
     restart: unless-stopped
@@ -34,3 +36,7 @@ secrets:
     file: ./secrets/isep_username.txt
   isep_password:
     file: ./secrets/isep_password.txt
+  isep_code_user:
+    file: ./secrets/isep_code_user.txt
+  isep_code_user_code:
+    file: ./secrets/isep_code_user_code.txt

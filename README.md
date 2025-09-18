@@ -63,6 +63,8 @@ The application supports multiple ways to handle sensitive credentials:
    ```bash
    echo "your_username" > secrets/isep_username.txt
    echo "your_password" > secrets/isep_password.txt
+   echo "your_student_code" > secrets/isep_code_user.txt
+   echo "your_student_code" > secrets/isep_code_user_code.txt
    chmod 600 secrets/*.txt
    ```
 
@@ -110,6 +112,8 @@ curl http://localhost:8080/calendar.ics
 # Setup production secrets
 echo "your_username" > secrets/isep_username.txt
 echo "your_password" > secrets/isep_password.txt
+echo "your_student_code" > secrets/isep_code_user.txt
+echo "your_student_code" > secrets/isep_code_user_code.txt
 chmod 600 secrets/*.txt
 
 # Deploy with production configuration

@@ -26,7 +26,7 @@ if [ ! -d "secrets" ]; then
 fi
 
 # Check if secret files exist
-if [ ! -f "secrets/isep_username.txt" ] || [ ! -f "secrets/isep_password.txt" ]; then
+if [ ! -f "secrets/isep_username.txt" ] || [ ! -f "secrets/isep_password.txt" ] || [ ! -f "secrets/isep_code_user.txt" ] || [ ! -f "secrets/isep_code_user_code.txt" ]; then
     echo "🔑 Setting up production secrets..."
     
     if [ ! -f "secrets/isep_username.txt" ]; then
@@ -43,6 +43,22 @@ if [ ! -f "secrets/isep_username.txt" ] || [ ! -f "secrets/isep_password.txt" ];
         echo "$password" > secrets/isep_password.txt
         chmod 600 secrets/isep_password.txt
         echo "✅ Created secrets/isep_password.txt"
+    fi
+    
+    if [ ! -f "secrets/isep_code_user.txt" ]; then
+        echo "Enter your ISEP student code:"
+        read -r code_user
+        echo "$code_user" > secrets/isep_code_user.txt
+        chmod 600 secrets/isep_code_user.txt
+        echo "✅ Created secrets/isep_code_user.txt"
+    fi
+    
+    if [ ! -f "secrets/isep_code_user_code.txt" ]; then
+        echo "Enter your ISEP student code (usually same as above):"
+        read -r code_user_code
+        echo "$code_user_code" > secrets/isep_code_user_code.txt
+        chmod 600 secrets/isep_code_user_code.txt
+        echo "✅ Created secrets/isep_code_user_code.txt"
     fi
 else
     echo "✅ Production secrets already exist"
