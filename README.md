@@ -87,6 +87,24 @@ bun run dev
 bun run start
 ```
 
+## 📚 API Documentation
+
+The service provides comprehensive API documentation:
+
+- **Interactive Docs**: http://localhost:8080/docs (Swagger UI)
+- **OpenAPI Spec**: http://localhost:8080/openapi.json
+- **API Info**: http://localhost:8080/
+
+### Available Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/` | GET | API information and available endpoints |
+| `/calendar.ics` | GET | iCalendar feed for calendar applications |
+| `/healthz` | GET | Health check and service status |
+| `/docs` | GET | Interactive API documentation (Swagger UI) |
+| `/openapi.json` | GET | OpenAPI 3.0 specification |
+
 ## 📱 Calendar Integration
 
 ### Apple Calendar (macOS)
@@ -138,6 +156,7 @@ curl -I http://localhost:8080/calendar.ics
 ```
 src/
 ├── app.ts          # Main application with Hono routes
+├── openapi.ts      # OpenAPI 3.0 specification
 ├── service.ts      # Core business logic and API calls
 ├── parser.ts       # JavaScript blob parsing
 ├── config.ts       # Configuration and environment
@@ -152,6 +171,13 @@ docker-compose.yml  # Service orchestration
 package.json        # Dependencies and scripts
 tsconfig.json       # TypeScript configuration
 ```
+
+### API Features
+- **OpenAPI 3.0** specification with full endpoint documentation
+- **Swagger UI** for interactive API exploration
+- **CORS support** for cross-origin requests
+- **Health monitoring** with detailed status information
+- **Error handling** with structured error responses
 
 ### Available Scripts
 ```bash

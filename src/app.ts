@@ -1,8 +1,10 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import { swaggerUI } from '@hono/swagger-ui';
 import { config } from './config.js';
 import { getCachedIcs, getHealthStatus } from './service.js';
+import { openApiSpec } from './openapi.js';
 
 const app = new Hono();
 
@@ -14,6 +16,8 @@ app.use('*', cors({
   allowHeaders: ['Content-Type', 'Authorization'],
 }));
 
+// OpenAPI specification is imported from separate file
+
 // Routes
 app.get('/', (c) => {
   return c.json({
@@ -22,10 +26,20 @@ app.get('/', (c) => {
     description: 'Convert ASP portal timetable to iCalendar',
     endpoints: {
       calendar: '/calendar.ics',
-      health: '/healthz'
+      health: '/healthz',
+      docs: '/docs',
+      openapi: '/openapi.json'
     }
   });
 });
+
+// OpenAPI JSON endpoint
+app.get('/openapi.json', (c) => {
+  return c.json(openApiSpec);
+});
+
+// Swagger UI
+app.get('/docs', swaggerUI({ url: '/openapi.json' }));
 
 app.get('/calendar.ics', async (c) => {
   try {
@@ -79,6 +93,8 @@ app.notFound((c) => {
 console.log(`🚀 ISEP ICS Bridge starting on port ${config.port}`);
 console.log(`📅 Calendar endpoint: http://localhost:${config.port}/calendar.ics`);
 console.log(`🏥 Health endpoint: http://localhost:${config.port}/healthz`);
+console.log(`📚 API Documentation: http://localhost:${config.port}/docs`);
+console.log(`📋 OpenAPI Spec: http://localhost:${config.port}/openapi.json`);
 
 export default {
   port: config.port,
