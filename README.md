@@ -79,8 +79,8 @@ The application supports multiple ways to handle sensitive credentials:
 |----------|-------------|---------|----------|
 | `ISEP_USERNAME` | ISEP portal username | - | Yes |
 | `ISEP_PASSWORD` | ISEP portal password | - | Yes |
-| `ISEP_CODE_USER` | Your student code | `256287` | Yes |
-| `ISEP_CODE_USER_CODE` | Usually same as above | `256287` | Yes |
+| `ISEP_CODE_USER` | Your student code | `YOUR_STUDENT_CODE` | Yes |
+| `ISEP_CODE_USER_CODE` | Usually same as above | `YOUR_STUDENT_CODE` | Yes |
 | `ISEP_ENTIDADE` | Student type | `aluno` | Yes |
 | `ISEP_FETCH_WEEKS_BEFORE` | Past weeks to fetch | `0` | No |
 | `ISEP_FETCH_WEEKS_AFTER` | Future weeks to fetch | `6` | No |
