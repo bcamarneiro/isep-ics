@@ -175,7 +175,7 @@ Most calendar applications support iCalendar feeds via URL subscription.
 bun run test:e2e
 
 # Or with Docker
-docker compose exec isep-ics bun run test:e2e
+docker compose exec isep-ics-bridge bun run test:e2e
 ```
 
 ### Diagnostic Test
@@ -184,7 +184,7 @@ docker compose exec isep-ics bun run test:e2e
 bun run test:diagnostic
 
 # Or with Docker
-docker compose exec isep-ics bun run test:diagnostic
+docker compose exec isep-ics-bridge bun run test:diagnostic
 ```
 
 ### Health Check
@@ -292,7 +292,7 @@ curl http://localhost:8080/healthz
 DEBUG=* bun run dev
 
 # Or with Docker
-docker compose exec isep-ics DEBUG=* bun run src/app.ts
+docker compose exec isep-ics-bridge DEBUG=* bun run src/app.ts
 ```
 
 ## 📊 Performance Metrics

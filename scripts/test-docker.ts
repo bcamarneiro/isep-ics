@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Docker Compose Test Suite
- * 
+ *
  * This script:
  * 1. Builds the Docker image
  * 2. Starts the service via docker-compose
@@ -50,7 +50,11 @@ interface TestResult {
   error?: string;
 }
 
-async function runCommand(command: string, args: string[] = [], timeout: number = 60000): Promise<TestResult> {
+async function runCommand(
+  command: string,
+  args: string[] = [],
+  timeout: number = 60000
+): Promise<TestResult> {
   return new Promise((resolve) => {
     const child = spawn(command, args, {
       stdio: 'pipe',
@@ -100,9 +104,12 @@ async function runCommand(command: string, args: string[] = [], timeout: number 
   });
 }
 
-async function waitForDockerService(maxRetries: number = 30, delay: number = 3000): Promise<boolean> {
+async function waitForDockerService(
+  maxRetries: number = 30,
+  delay: number = 3000
+): Promise<boolean> {
   logInfo('Waiting for Docker service to be available...');
-  
+
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const response = await fetch('http://localhost:8080/healthz', {
@@ -115,7 +122,7 @@ async function waitForDockerService(maxRetries: number = 30, delay: number = 300
         logInfo(`Health status: ${health.status}, Events: ${health.eventsCount}`);
         return true;
       }
-    } catch (error) {
+    } catch (_error) {
       // Service not ready yet
     }
 
@@ -131,9 +138,9 @@ async function waitForDockerService(maxRetries: number = 30, delay: number = 300
 
 async function checkDockerHealth(): Promise<boolean> {
   logInfo('Checking Docker container health...');
-  
+
   const result = await runCommand('docker', ['compose', 'ps', '--format', 'json'], 10000);
-  
+
   if (result.success) {
     try {
       // Handle empty output (no containers running)
@@ -141,25 +148,25 @@ async function checkDockerHealth(): Promise<boolean> {
         logError('No containers found');
         return false;
       }
-      
+
       const containers = JSON.parse(result.output);
-      
+
       // Handle case where output is a single object instead of array
       const containerArray = Array.isArray(containers) ? containers : [containers];
       const isepContainer = containerArray.find((c: any) => c.Name === 'isep-ics');
-      
+
       if (isepContainer) {
         logInfo(`Container status: ${isepContainer.State}`);
         logInfo(`Health status: ${isepContainer.Health || 'N/A'}`);
         return isepContainer.State === 'running';
       } else {
-        logError('isep-ics container not found');
-        logInfo('Available containers:', containerArray.map((c: any) => c.Name).join(', '));
+        logError('isep-ics-bridge container not found');
+        logInfo(`Available containers: ${containerArray.map((c: any) => c.Name).join(', ')}`);
         return false;
       }
     } catch (error) {
       logError(`Failed to parse container status: ${error}`);
-      logInfo('Raw output:', result.output);
+      logInfo(`Raw output: ${result.output}`);
       return false;
     }
   } else {
@@ -218,6 +225,16 @@ async function main(): Promise<void> {
     // Step 4: Wait for service to be ready
     logHeader('⏳ Waiting for Service to Start');
     const serviceReady = await waitForDockerService();
+    const serviceResult: TestResult = {
+      name: 'Service Availability Check',
+      success: serviceReady,
+      output: serviceReady
+        ? 'Service is available and responding'
+        : 'Service failed to become available within timeout',
+      error: serviceReady ? undefined : 'Service health check failed',
+    };
+    results.push(serviceResult);
+
     if (!serviceReady) {
       throw new Error('Docker service failed to start');
     }
@@ -266,7 +283,6 @@ async function main(): Promise<void> {
       logInfo('Recent Docker logs:');
       console.log(logsResult.output);
     }
-
   } catch (error) {
     logError(`Docker test suite failed: ${error}`);
   } finally {
@@ -274,7 +290,7 @@ async function main(): Promise<void> {
     logHeader('🧹 Cleaning Up Docker Containers');
     logInfo('Stopping Docker service...');
     const stopResult = await runCommand('docker', ['compose', 'down'], 30000);
-    
+
     if (stopResult.success) {
       logSuccess('Docker service stopped');
     } else {
@@ -285,20 +301,20 @@ async function main(): Promise<void> {
 
   // Step 10: Report results
   logHeader('📊 Docker Test Results Summary');
-  
-  const passed = results.filter(r => r.success).length;
+
+  const passed = results.filter((r) => r.success).length;
   const total = results.length;
-  
+
   console.log(`\nTests run: ${total}`);
   console.log(`Passed: ${passed}`);
   console.log(`Failed: ${total - passed}`);
-  
+
   console.log('\nDetailed Results:');
-  results.forEach(result => {
+  results.forEach((result) => {
     const status = result.success ? '✅' : '❌';
     console.log(`  ${status} ${result.name}`);
   });
-  
+
   if (passed === total) {
     logSuccess('🎉 All Docker tests passed! Your refactored code works perfectly in Docker!');
     process.exit(0);

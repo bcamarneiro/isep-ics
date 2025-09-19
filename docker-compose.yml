@@ -1,7 +1,7 @@
 services:
-  isep-ics:
+  isep-ics-bridge:
     build: .
-    container_name: isep-ics
+    container_name: isep-ics-bridge
     env_file:
       - .env
     environment:
