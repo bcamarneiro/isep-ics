@@ -28,9 +28,17 @@
       "biome check --write --unsafe"
     ]
   },
-  "keywords": ["isep", "ics", "calendar", "timetable", "bridge", "bun"],
-  "author": "Bruno Camarneiro",
+  "keywords": ["isep", "ics", "calendar", "timetable", "bridge", "bun", "typescript", "hono", "icalendar"],
+  "author": "Bruno Camarneiro <bruno@camarneiro.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bcamarneiro/isep-ics.git"
+  },
+  "homepage": "https://github.com/bcamarneiro/isep-ics#readme",
+  "bugs": {
+    "url": "https://github.com/bcamarneiro/isep-ics/issues"
+  },
   "dependencies": {
     "hono": "3.12.0",
     "cheerio": "1.0.0-rc.12",

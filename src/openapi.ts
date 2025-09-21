@@ -8,7 +8,7 @@ export const openApiSpec = {
     description: 'Convert ASP portal timetable to iCalendar format for calendar applications',
     contact: {
       name: 'Bruno Camarneiro',
-      email: 'bruno@example.com',
+      email: 'bruno@camarneiro.com',
     },
     license: {
       name: 'MIT',

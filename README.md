@@ -1,8 +1,16 @@
 # ISEP ICS Bridge 🚀
 
-Modern TypeScript service that fetches the ASP portal timetable, converts its JavaScript event payloads to iCalendar, and exposes `/calendar.ics` for Apple Calendar (or any calendar app) subscription.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Bun](https://img.shields.io/badge/Bun-000000?logo=bun&logoColor=white)](https://bun.sh)
+[![Hono](https://img.shields.io/badge/Hono-FF6B6B?logo=hono&logoColor=white)](https://hono.dev)
 
-Built with **Bun** and **Hono** for maximum performance and developer experience.
+A personal helper that fetches your ISEP timetable and converts it to iCalendar format so you can sync it with a calendar apps.
+
+Built with **Bun** and **Hono** because they're fast and fun to work with.
+
+> **Note**: This is my personal project for syncing my ISEP schedule. Feel free to use it if you're also an ISEP student, but don't expect enterprise-level support! 😅
+> Also, all of this was vibe coded during in a night. All this readme may be full of crap.
 
 ## ✨ Features
 
@@ -15,14 +23,14 @@ Built with **Bun** and **Hono** for maximum performance and developer experience
 - **📊 Comprehensive testing** with E2E and diagnostic tools
 - **🔐 Session management** with automatic cookie handling
 
-## 🚀 Performance Improvements
+## 🚀 Why I Rewrote It
 
-Compared to the Python version:
-- **3-5x faster** cache refresh with parallel API calls
-- **5-10x faster** health checks
-- **2x faster** response times
-- **Better memory efficiency** with V8 optimizations
-- **Modern async/await** patterns throughout
+The original Python version was slow and annoying. This one:
+
+- **Actually fast** - no more waiting around
+- **Works reliably** - no more random crashes
+- **Easy to deploy** - just Docker and go
+- **Fun to work on** - TypeScript is nice
 
 ## 🛠️ Tech Stack
 
@@ -47,19 +55,24 @@ Compared to the Python version:
 The application supports multiple ways to handle sensitive credentials:
 
 #### Development Setup
+
 1. **Run the setup script**:
+
    ```bash
    ./setup-secrets.sh
    ```
 
 2. **Edit the `.env` file** with your credentials:
+
    ```bash
    ISEP_USERNAME=your_username
    ISEP_PASSWORD=your_password
    ```
 
 #### Production Setup
+
 1. **Create secret files**:
+
    ```bash
    echo "your_username" > secrets/isep_username.txt
    echo "your_password" > secrets/isep_password.txt
@@ -69,6 +82,7 @@ The application supports multiple ways to handle sensitive credentials:
    ```
 
 2. **Deploy with production compose**:
+   
    ```bash
    docker compose -f docker-compose.prod.yml up -d
    ```
@@ -90,9 +104,23 @@ The application supports multiple ways to handle sensitive credentials:
 
 ## 🚀 Quick Start
 
+### One-Command Setup (Docker)
+
+```bash
+# Clone and start the service
+git clone https://github.com/bcamarneiro/isep-ics.git
+cd isep-ics
+./setup-secrets.sh  # Follow prompts to enter your ISEP credentials
+docker compose up -d --build
+
+# Your calendar is now available at:
+# http://localhost:8080/calendar.ics
+```
+
 ### Using Docker (Recommended)
 
 #### Development
+
 ```bash
 # Setup secrets (first time only)
 ./setup-secrets.sh
@@ -108,6 +136,7 @@ curl http://localhost:8080/calendar.ics
 ```
 
 #### Production
+
 ```bash
 # Setup production secrets
 echo "your_username" > secrets/isep_username.txt
@@ -154,22 +183,26 @@ The service provides comprehensive API documentation:
 ## 📱 Calendar Integration
 
 ### Apple Calendar (macOS)
+
 1. Open Calendar app
 2. **File → New Calendar Subscription…**
 3. URL: `http://localhost:8080/calendar.ics`
 4. Choose refresh interval (recommended: 15 minutes)
 
 ### Google Calendar
+
 1. Go to Google Calendar
 2. **+ Add calendar → From URL**
 3. URL: `http://localhost:8080/calendar.ics`
 
 ### Other Calendar Apps
+
 Most calendar applications support iCalendar feeds via URL subscription.
 
 ## 🧪 Testing
 
 ### End-to-End Test
+
 ```bash
 # Run comprehensive E2E test
 bun run test:e2e
@@ -179,6 +212,7 @@ docker compose exec isep-ics-bridge bun run test:e2e
 ```
 
 ### Diagnostic Test
+
 ```bash
 # Run diagnostic test for troubleshooting
 bun run test:diagnostic
@@ -188,6 +222,7 @@ docker compose exec isep-ics-bridge bun run test:diagnostic
 ```
 
 ### Health Check
+
 ```bash
 # Quick health check
 curl http://localhost:8080/healthz
@@ -199,7 +234,8 @@ curl -I http://localhost:8080/calendar.ics
 ## 🔧 Development
 
 ### Project Structure
-```
+
+```text
 src/
 ├── app.ts          # Main application with Hono routes
 ├── openapi.ts      # OpenAPI 3.0 specification
@@ -219,6 +255,7 @@ tsconfig.json       # TypeScript configuration
 ```
 
 ### API Features
+
 - **OpenAPI 3.0** specification with full endpoint documentation
 - **Swagger UI** for interactive API exploration
 - **CORS support** for cross-origin requests
@@ -226,6 +263,7 @@ tsconfig.json       # TypeScript configuration
 - **Error handling** with structured error responses
 
 ### Available Scripts
+
 ```bash
 bun run dev         # Development with hot reload
 bun run start       # Production start
@@ -249,6 +287,7 @@ The service uses session cookies for authentication. When they expire:
 ## 🐳 Docker Details
 
 ### Container Features
+
 - **Base**: `oven/bun:1-alpine` (ultra-lightweight)
 - **Size**: ~50MB (vs ~30MB Python)
 - **Security**: Non-root user, minimal attack surface
@@ -256,6 +295,7 @@ The service uses session cookies for authentication. When they expire:
 - **Performance**: Optimized for Bun runtime
 
 ### Health Monitoring
+
 ```bash
 # Check container health
 docker compose ps
@@ -287,6 +327,7 @@ curl http://localhost:8080/healthz
    - Monitor memory usage
 
 ### Debug Mode
+
 ```bash
 # Run with debug logging
 DEBUG=* bun run dev
@@ -332,6 +373,7 @@ If you encounter issues:
 **Built with ❤️ using Bun and TypeScript**
 
 ### Monitoring Cookie Status
+
 ```bash
 # Check if session is still valid
 curl http://localhost:8080/healthz | jq '.session_valid'
@@ -341,6 +383,7 @@ bun run test:diagnostic
 ```
 
 ### Updating Expired Cookies
+
 When cookies expire, you need to update them manually:
 
 1. **Login to ISEP Portal**: Go to https://portal.isep.ipp.pt and login
@@ -352,6 +395,7 @@ When cookies expire, you need to update them manually:
 7. **Verify**: `bun run test:diagnostic`
 
 ## Notes
+
 - The service uses session-based authentication with cookies
 - Parser extracts course/teacher/room information from HTML fragments in the portal's JavaScript
 - All API calls are parallelized for maximum performance
